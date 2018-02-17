@@ -16,8 +16,5 @@
   -->
 
 <resources>
-    <style name="Theme.Main" parent="@android:style/Theme.Material.DayNight.DarkActionBar">
-    </style>
-    <style name="Theme.ActionBar.SubSettings" parent="@android:style/Widget.Material.ActionBar">
-    </style>
+    <style name="Theme.Main" parent="@android:style/Theme.DeviceDefault.Settings" />
 </resources>
