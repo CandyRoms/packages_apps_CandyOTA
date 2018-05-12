@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.fusionjack.slimota.tasks;
+package com.candy.ota.tasks;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -27,17 +28,18 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 
-import com.fusionjack.slimota.MainActivity;
-import com.fusionjack.slimota.R;
-import com.fusionjack.slimota.configs.AppConfig;
-import com.fusionjack.slimota.configs.LinkConfig;
-import com.fusionjack.slimota.configs.OTAConfig;
-import com.fusionjack.slimota.configs.OTAVersion;
-import com.fusionjack.slimota.dialogs.WaitDialogHandler;
-import com.fusionjack.slimota.utils.OTAUtils;
-import com.fusionjack.slimota.xml.OTADevice;
-import com.fusionjack.slimota.xml.OTAParser;
+import com.candy.ota.MainActivity;
+import com.candy.ota.R;
+import com.candy.ota.configs.AppConfig;
+import com.candy.ota.configs.LinkConfig;
+import com.candy.ota.configs.OTAConfig;
+import com.candy.ota.configs.OTAVersion;
+import com.candy.ota.dialogs.WaitDialogHandler;
+import com.candy.ota.utils.OTAUtils;
+import com.candy.ota.xml.OTADevice;
+import com.candy.ota.xml.OTAParser;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -103,6 +105,7 @@ public class CheckUpdateTask extends AsyncTask<Context, Void, OTADevice> {
             boolean updateAvailable = OTAVersion.checkServerVersion(latestVersion, mContext);
             if (updateAvailable) {
                 showNotification(mContext);
+                showToast(R.string.update_available);
             } else {
                 showToast(R.string.no_update_available);
             }
@@ -151,22 +154,32 @@ public class CheckUpdateTask extends AsyncTask<Context, Void, OTADevice> {
     }
 
     private void showNotification(Context context) {
-        Notification.Builder builder = new Notification.Builder(context);
-        builder.setContentTitle(context.getString(R.string.notification_title));
-        builder.setContentText(context.getString(R.string.notification_message));
-        builder.setSmallIcon(R.drawable.ic_notification_slimota);
-        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_slimota));
+        if (mIsBackgroundThread) {
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            int notifyID = 1;
+            String id = "candyota_channel";
+            CharSequence name = context.getString(R.string.candy_channel);
+            String description = context.getString(R.string.candy_channel_description);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+            mChannel.setDescription(description);
+            notificationManager.createNotificationChannel(mChannel);
 
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-        builder.setContentIntent(pendingIntent);
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context.getApplicationContext())
+                    .setSmallIcon(R.drawable.ic_notification_candy)
+                    .setContentTitle(context.getString(R.string.notification_title))
+                    .setContentText(context.getString(R.string.notification_message))
+                    .setOnlyAlertOnce(true)
+                    .setAutoCancel(true)
+                    .setChannelId(id);
 
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = builder.build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notificationManager.notify(1000001, notification);
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+                    PendingIntent.FLAG_ONE_SHOT);
+            mBuilder.setContentIntent(pendingIntent);
+            notificationManager.notify(notifyID, mBuilder.build());
+        }
     }
 }

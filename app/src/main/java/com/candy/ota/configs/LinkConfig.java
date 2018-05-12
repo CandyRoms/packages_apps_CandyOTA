@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.fusionjack.slimota.configs;
+package com.candy.ota.configs;
 
 import android.content.Context;
 
-import com.fusionjack.slimota.xml.OTALink;
-import com.fusionjack.slimota.xml.OTAParser;
-import com.fusionjack.slimota.utils.OTAUtils;
+import com.candy.ota.xml.OTALink;
+import com.candy.ota.xml.OTAParser;
+import com.candy.ota.utils.OTAUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

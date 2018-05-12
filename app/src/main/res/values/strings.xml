@@ -18,8 +18,8 @@
 <resources>
 
     <!-- App -->
-    <string name="app_name">TeslaOTA</string>
-    <string name="app_title">TeslaOTA</string>
+    <string name="app_name">CandyRoms OTA</string>
+    <string name="app_title">CandyRoms OTA</string>
 
     <!-- Categories -->
     <string name="ota_category">OTA</string>
@@ -43,10 +43,22 @@
     <string name="autoupdate_disabled">Automatic update is disabled</string>
 
     <!-- Notification -->
-    <string name="notification_title">ROM Update</string>
-    <string name="notification_message">New update available!</string>
+    <string name="notification_title">CandyRoms update</string>
+    <string name="notification_message">A new version is available!</string>
+    <string name="candy_channel">CandyOTA notifications</string>
+    <string name="candy_channel_description">Notifications about new CandyRoms updates</string>
 
     <!-- Dialog -->
     <string name="dialog_message">Checking for ROM updates, please wait…</string>
 
+    <!-- Toast -->
+    <string name="toast_message">There\'s no browser installed</string>
+
+    <!-- Links -->
+    <string name="links_rom_title">ROM</string>
+    <string name="links_rom_summary">Download CandyRoms build</string>
+    <string name="links_changelog_title">Changelog</string>
+    <string name="links_changelog_summary">Download Changelog file</string>
+    <string name="links_donation_title">Donation</string>
+    <string name="links_donation_summary">Donate me some beer</string>
 </resources>

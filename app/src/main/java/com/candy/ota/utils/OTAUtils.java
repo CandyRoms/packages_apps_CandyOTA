@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package com.fusionjack.slimota.utils;
+package com.candy.ota.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.fusionjack.slimota.configs.OTAConfig;
+import com.candy.ota.configs.OTAConfig;
+import com.candy.ota.R;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,10 +38,8 @@ import java.util.Properties;
 
 public final class OTAUtils {
 
-    private static final String TAG = "SlimOTA";
+    private static final String TAG = "CandyOTA";
     private static final boolean DEBUG = true;
-
-    private static final String BUILD_PROP = "/system/build.prop";
 
     private OTAUtils() {
     }
@@ -65,20 +65,24 @@ public final class OTAUtils {
 
     public static String getDeviceName(Context context) {
         String propName = OTAConfig.getInstance(context).getDeviceSource();
-        return OTAUtils.getBuildProp(propName);
+        return OTAUtils.getProp(propName);
     }
 
-    public static String getBuildProp(String propertyName) {
-        Properties buildProps = new Properties();
+    public static String getProp(String propName) {
+        Process p = null;
+        String result = "";
         try {
-            FileInputStream is = new FileInputStream(new File(BUILD_PROP));
-            buildProps.load(is);
-            is.close();
-            return buildProps.getProperty(propertyName, "");
+            p = new ProcessBuilder("/system/bin/getprop", propName).redirectErrorStream(true).start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line = "";
+            while ((line=br.readLine()) != null) {
+                result = line;
+            }
+            br.close();
         } catch (IOException e) {
-            logError(e);
+            e.printStackTrace();
         }
-        return "";
+            return result;
     }
 
     public static String runCommand(String command) {
@@ -113,7 +117,14 @@ public final class OTAUtils {
 
     public static void launchUrl(String url, Context context) {
         if (!url.isEmpty() && context != null) {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            PackageManager pm = context.getPackageManager();
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            if (intent.resolveActivity(pm) != null) {
+                context.startActivity(intent);
+            } else {
+                Toast toast = Toast.makeText(context, R.string.toast_message, Toast.LENGTH_LONG);
+                toast.show();
+            }
         }
     }
 }

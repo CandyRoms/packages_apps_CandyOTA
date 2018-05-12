@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.fusionjack.slimota.fragments;
+package com.candy.ota.fragments;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -25,18 +25,18 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
-import com.fusionjack.slimota.R;
-import com.fusionjack.slimota.configs.AppConfig;
-import com.fusionjack.slimota.configs.LinkConfig;
-import com.fusionjack.slimota.configs.OTAVersion;
-import com.fusionjack.slimota.dialogs.WaitDialogFragment;
-import com.fusionjack.slimota.tasks.CheckUpdateTask;
-import com.fusionjack.slimota.utils.OTAUtils;
-import com.fusionjack.slimota.xml.OTALink;
+import com.candy.ota.R;
+import com.candy.ota.configs.AppConfig;
+import com.candy.ota.configs.LinkConfig;
+import com.candy.ota.configs.OTAVersion;
+import com.candy.ota.dialogs.WaitDialogFragment;
+import com.candy.ota.tasks.CheckUpdateTask;
+import com.candy.ota.utils.OTAUtils;
+import com.candy.ota.xml.OTALink;
 
 import java.util.List;
 
-public class SlimOTAFragment extends PreferenceFragment implements
+public class CandyOTAFragment extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener,
         SharedPreferences.OnSharedPreferenceChangeListener ,
         WaitDialogFragment.OTADialogListener,
@@ -59,7 +59,7 @@ public class SlimOTAFragment extends PreferenceFragment implements
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        addPreferencesFromResource(R.xml.slimota);
+        addPreferencesFromResource(R.xml.candy_ota);
 
         mRomInfo = (PreferenceScreen) getPreferenceScreen().findPreference(KEY_ROM_INFO);
         mCheckUpdate = (PreferenceScreen) getPreferenceScreen().findPreference(KEY_CHECK_UPDATE);
@@ -91,8 +91,24 @@ public class SlimOTAFragment extends PreferenceFragment implements
             }
             if (linkPref != null) {
                 String title = link.getTitle();
-                linkPref.setTitle(title.isEmpty() ? id : title);
-                linkPref.setSummary(link.getDescription());
+                switch (id) {
+                case "rom":
+                    linkPref.setTitle(getActivity().getResources().getString(R.string.links_rom_title));
+                    linkPref.setSummary(getActivity().getResources().getString(R.string.links_rom_summary));
+                    break;
+                case "changelog":
+                    linkPref.setTitle(getActivity().getResources().getString(R.string.links_changelog_title));
+                    linkPref.setSummary(getActivity().getResources().getString(R.string.links_changelog_summary));
+                    break;
+                case "donation":
+                    linkPref.setTitle(getActivity().getResources().getString(R.string.links_donation_title));
+                    linkPref.setSummary(getActivity().getResources().getString(R.string.links_donation_summary));
+                    break;
+                default:
+                    linkPref.setTitle(title.isEmpty() ? id : title);
+                    linkPref.setSummary(link.getDescription());
+                    break;
+                }
             }
         }
     }
